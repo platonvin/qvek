@@ -1,3 +1,5 @@
+[![Rust](https://github.com/platonvin/qvek/actions/workflows/rust.yml/badge.svg)](https://github.com/platonvin/qvek/actions/workflows/rust.yml)
+
 # qvek
 
 Convenient vector creation macros for the `vek` crate.
