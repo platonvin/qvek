@@ -36,7 +36,7 @@
 
 use vek::num_traits::NumCast;
 // use vek::num_traits::Default;
-pub use vek::*;
+pub extern crate vek;
 
 /// Trait that converts a type into a proxy array of target scalars.
 ///
@@ -103,7 +103,7 @@ where
     Target: NumCast,
 {
     fn convert(src: Source) -> Self {
-        num_traits::cast::cast(src).expect("Conversion failed")
+        vek::num_traits::cast::cast(src).expect("Conversion failed")
     }
 }
 
@@ -123,9 +123,9 @@ where
 /// Marker trait for vectors with a given number of elements.
 pub trait VekVector<const N: usize> {}
 
-impl<T> VekVector<2> for Vec2<T> {}
-impl<T> VekVector<3> for Vec3<T> {}
-impl<T> VekVector<4> for Vec4<T> {}
+impl<T> VekVector<2> for vek::Vec2<T> {}
+impl<T> VekVector<3> for vek::Vec3<T> {}
+impl<T> VekVector<4> for vek::Vec4<T> {}
 
 /// Blanket implementation for scalar types.
 ///
@@ -146,7 +146,7 @@ where
 /// Implementation for Vec2<E>.
 ///
 /// A Vec2 converts to a proxy array with two elements.
-impl<E, T> IntoProxy<T> for Vec2<E>
+impl<E, T> IntoProxy<T> for vek::Vec2<E>
 where
     E: Copy,
     T: Scalar + Convert<E>,
@@ -165,7 +165,7 @@ where
 /// Implementation for Vec3<E>.
 ///
 /// A Vec3 converts to a proxy array with three elements.
-impl<E, T> IntoProxy<T> for Vec3<E>
+impl<E, T> IntoProxy<T> for vek::Vec3<E>
 where
     E: Copy,
     T: Scalar + Convert<E>,
@@ -185,7 +185,7 @@ where
 /// Implementation for Vec4<E>.
 ///
 /// A Vec4 converts to a proxy array with four elements.
-impl<E, T> IntoProxy<T> for Vec4<E>
+impl<E, T> IntoProxy<T> for vek::Vec4<E>
 where
     E: Copy,
     T: Scalar + Convert<E>,
@@ -206,7 +206,7 @@ where
 /// --- Functions for Vec2<E> ---
 
 /// Builds a Vec2<E> from a single argument whose proxy size must be exactly 2.
-pub fn vec2_1<E, T: IntoProxy<E>>(arg1: T) -> Vec2<E>
+pub fn vec2_1<E, T: IntoProxy<E>>(arg1: T) -> vek::Vec2<E>
 where
     E: Clone + Copy,
 {
@@ -218,11 +218,11 @@ where
     }
     let proxy = arg1.into_proxy();
     let components = proxy.as_ref();
-    Vec2::<E>::new(components[0], components[1])
+    vek::Vec2::<E>::new(components[0], components[1])
 }
 
 /// Builds a Vec2<E> from two arguments whose combined proxy sizes equal 2.
-pub fn vec2_2<E, T1: IntoProxy<E>, T2: IntoProxy<E>>(arg1: T1, arg2: T2) -> Vec2<E>
+pub fn vec2_2<E, T1: IntoProxy<E>, T2: IntoProxy<E>>(arg1: T1, arg2: T2) -> vek::Vec2<E>
 where
     E: Clone + Copy + Default,
 {
@@ -236,13 +236,13 @@ where
     let slice2 = proxy2.as_ref();
     components[0..slice1.len()].copy_from_slice(slice1);
     components[slice1.len()..].copy_from_slice(slice2);
-    Vec2::<E>::new(components[0], components[1])
+    vek::Vec2::<E>::new(components[0], components[1])
 }
 
 /// --- Functions for Vec3<E> ---
 
 /// Builds a Vec3<E> from a single argument whose proxy size must be exactly 3.
-pub fn vec3_1<E, T: IntoProxy<E>>(arg1: T) -> Vec3<E>
+pub fn vec3_1<E, T: IntoProxy<E>>(arg1: T) -> vek::Vec3<E>
 where
     E: Clone + Copy,
 {
@@ -254,11 +254,11 @@ where
     }
     let proxy = arg1.into_proxy();
     let components = proxy.as_ref();
-    Vec3::<E>::new(components[0], components[1], components[2])
+    vek::Vec3::<E>::new(components[0], components[1], components[2])
 }
 
 /// Builds a Vec3<E> from two arguments whose combined proxy sizes equal 3.
-pub fn vec3_2<E, T1: IntoProxy<E>, T2: IntoProxy<E>>(arg1: T1, arg2: T2) -> Vec3<E>
+pub fn vec3_2<E, T1: IntoProxy<E>, T2: IntoProxy<E>>(arg1: T1, arg2: T2) -> vek::Vec3<E>
 where
     E: Clone + Copy + Default,
 {
@@ -272,7 +272,7 @@ where
     let slice2 = proxy2.as_ref();
     components[0..slice1.len()].copy_from_slice(slice1);
     components[slice1.len()..].copy_from_slice(slice2);
-    Vec3::<E>::new(components[0], components[1], components[2])
+    vek::Vec3::<E>::new(components[0], components[1], components[2])
 }
 
 /// Builds a Vec3<E> from three arguments whose combined proxy sizes equal 3.
@@ -280,7 +280,7 @@ pub fn vec3_3<E, T1: IntoProxy<E>, T2: IntoProxy<E>, T3: IntoProxy<E>>(
     arg1: T1,
     arg2: T2,
     arg3: T3,
-) -> Vec3<E>
+) -> vek::Vec3<E>
 where
     E: Clone + Copy + Default,
 {
@@ -304,13 +304,13 @@ where
         components[idx] = *comp;
         idx += 1;
     }
-    Vec3::<E>::new(components[0], components[1], components[2])
+    vek::Vec3::<E>::new(components[0], components[1], components[2])
 }
 
 /// --- Functions for Vec4<E> ---
 
 /// Builds a Vec4<E> from a single argument whose proxy size must be exactly 4.
-pub fn vec4_1<E, T: IntoProxy<E>>(arg1: T) -> Vec4<E>
+pub fn vec4_1<E, T: IntoProxy<E>>(arg1: T) -> vek::Vec4<E>
 where
     E: Clone + Copy,
 {
@@ -322,11 +322,11 @@ where
     }
     let proxy = arg1.into_proxy();
     let comp = proxy.as_ref();
-    Vec4::<E>::new(comp[0], comp[1], comp[2], comp[3])
+    vek::Vec4::<E>::new(comp[0], comp[1], comp[2], comp[3])
 }
 
 /// Builds a Vec4<E> from two arguments whose combined proxy sizes equal 4.
-pub fn vec4_2<E, T1: IntoProxy<E>, T2: IntoProxy<E>>(arg1: T1, arg2: T2) -> Vec4<E>
+pub fn vec4_2<E, T1: IntoProxy<E>, T2: IntoProxy<E>>(arg1: T1, arg2: T2) -> vek::Vec4<E>
 where
     E: Clone + Copy + Default,
 {
@@ -340,7 +340,7 @@ where
     let slice2 = proxy2.as_ref();
     components[0..slice1.len()].copy_from_slice(slice1);
     components[slice1.len()..].copy_from_slice(slice2);
-    Vec4::<E>::new(components[0], components[1], components[2], components[3])
+    vek::Vec4::<E>::new(components[0], components[1], components[2], components[3])
 }
 
 /// Builds a Vec4<E> from three arguments whose combined proxy sizes equal 4.
@@ -348,7 +348,7 @@ pub fn vec4_3<E, T1: IntoProxy<E>, T2: IntoProxy<E>, T3: IntoProxy<E>>(
     arg1: T1,
     arg2: T2,
     arg3: T3,
-) -> Vec4<E>
+) -> vek::Vec4<E>
 where
     E: Clone + Copy + Default,
 {
@@ -372,7 +372,7 @@ where
         components[idx] = *comp;
         idx += 1;
     }
-    Vec4::<E>::new(components[0], components[1], components[2], components[3])
+    vek::Vec4::<E>::new(components[0], components[1], components[2], components[3])
 }
 
 /// Builds a Vec4<E> from four arguments whose combined proxy sizes equal 4.
@@ -381,7 +381,7 @@ pub fn vec4_4<E, T1: IntoProxy<E>, T2: IntoProxy<E>, T3: IntoProxy<E>, T4: IntoP
     arg2: T2,
     arg3: T3,
     arg4: T4,
-) -> Vec4<E>
+) -> vek::Vec4<E>
 where
     E: Clone + Copy + Default,
 {
@@ -411,7 +411,7 @@ where
         components[idx] = comp;
         idx += 1;
     }
-    Vec4::<E>::new(components[0], components[1], components[2], components[3])
+    vek::Vec4::<E>::new(components[0], components[1], components[2], components[3])
 }
 
 /// Generates vector creation macros for a given scalar type.
@@ -437,10 +437,10 @@ macro_rules! generate_vec_macros {
         #[macro_export]
         macro_rules! $vec2_macro {
             ($arg1:expr) => {
-                vec2_1::<$scalar, _>($arg1)
+                $crate::vec2_1::<$scalar, _>($arg1)
             };
             ($arg1:expr, $arg2:expr) => {
-                vec2_2::<$scalar, _, _>($arg1, $arg2)
+                $crate::vec2_2::<$scalar, _, _>($arg1, $arg2)
             }; // ($($arg:tt)+) => {
                //     compile_error!(concat!(stringify!($vec2_macro), " macro only supports 1 or 2 arguments"))
                // };
@@ -449,13 +449,13 @@ macro_rules! generate_vec_macros {
         #[macro_export]
         macro_rules! $vec3_macro {
             ($arg1:expr) => {
-                vec3_1::<$scalar, _>($arg1)
+                $crate::vec3_1::<$scalar, _>($arg1)
             };
             ($arg1:expr, $arg2:expr) => {
-                vec3_2::<$scalar, _, _>($arg1, $arg2)
+                $crate::vec3_2::<$scalar, _, _>($arg1, $arg2)
             };
             ($arg1:expr, $arg2:expr, $arg3:expr) => {
-                vec3_3::<$scalar, _, _, _>($arg1, $arg2, $arg3)
+                $crate::vec3_3::<$scalar, _, _, _>($arg1, $arg2, $arg3)
             }; // ($($arg:tt)+) => {
                //     compile_error!(concat!(stringify!($vec3_macro), " macro only supports 1, 2, or 3 arguments"))
                // };
@@ -464,16 +464,16 @@ macro_rules! generate_vec_macros {
         #[macro_export]
         macro_rules! $vec4_macro {
             ($arg1:expr) => {
-                vec4_1::<$scalar, _>($arg1)
+                $crate::vec4_1::<$scalar, _>($arg1)
             };
             ($arg1:expr, $arg2:expr) => {
-                vec4_2::<$scalar, _, _>($arg1, $arg2)
+                $crate::vec4_2::<$scalar, _, _>($arg1, $arg2)
             };
             ($arg1:expr, $arg2:expr, $arg3:expr) => {
-                vec4_3::<$scalar, _, _, _>($arg1, $arg2, $arg3)
+                $crate::vec4_3::<$scalar, _, _, _>($arg1, $arg2, $arg3)
             };
             ($arg1:expr, $arg2:expr, $arg3:expr, $arg4:expr) => {
-                vec4_4::<$scalar, _, _, _, _>($arg1, $arg2, $arg3, $arg4)
+                $crate::vec4_4::<$scalar, _, _, _, _>($arg1, $arg2, $arg3, $arg4)
             }; // ($($arg:tt)+) => {
                //     compile_error!(concat!(stringify!($vec4_macro), " macro only supports 1, 2, 3, or 4 arguments"))
                // };
