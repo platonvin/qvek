@@ -3,7 +3,7 @@ use qvek::*;
 
 fn direct_conversion_i32_f32(c: &mut Criterion) {
     c.bench_function("direct_conversion_i32_f32", |b| {
-        b.iter(|| Vec3::new(1i32 as f32, 2i32 as f32, 3i32 as f32))
+        b.iter(|| vek::Vec3::new(1i32 as f32, 2i32 as f32, 3i32 as f32))
     });
 }
 
@@ -15,7 +15,7 @@ fn qvek_conversion_i32_f32(c: &mut Criterion) {
 
 fn direct_conversion_i8_f32(c: &mut Criterion) {
     c.bench_function("direct_conversion_i8_f32", |b| {
-        b.iter(|| Vec3::new(1i8 as f32, 2i8 as f32, 3i8 as f32))
+        b.iter(|| vek::Vec3::new(1i8 as f32, 2i8 as f32, 3i8 as f32))
     });
 }
 
@@ -28,21 +28,21 @@ fn qvek_conversion_i8_f32(c: &mut Criterion) {
 fn direct_conversion_vec2_f32(c: &mut Criterion) {
     c.bench_function("direct_conversion_vec2_f32", |b| {
         b.iter(|| {
-            let v = Vec2::new(1i16 as f32, 2i16 as f32);
-            Vec3::new(v.x, v.y, 3i16 as f32)
+            let v = vek::Vec2::new(1i16 as f32, 2i16 as f32);
+            vek::Vec3::new(v.x, v.y, 3i16 as f32)
         })
     });
 }
 
 fn qvek_conversion_vec2_f32(c: &mut Criterion) {
     c.bench_function("qvek_conversion_vec2_f32", |b| {
-        b.iter(|| vec3!(Vec2::new(1i16, 2i16), 3i16))
+        b.iter(|| vec3!(vek::Vec2::new(1i16, 2i16), 3i16))
     });
 }
 
 fn direct_conversion_f64_f32(c: &mut Criterion) {
     c.bench_function("direct_conversion_f64_f32", |b| {
-        b.iter(|| Vec3::new(1.0f64 as f32, 2.0f64 as f32, 3.0f64 as f32))
+        b.iter(|| vek::Vec3::new(1.0f64 as f32, 2.0f64 as f32, 3.0f64 as f32))
     });
 }
 
@@ -54,15 +54,15 @@ fn qvek_conversion_f64_f32(c: &mut Criterion) {
 
 fn qvek_vec4_conversion_mixed(c: &mut Criterion) {
     c.bench_function("qvek_vec4_conversion_mixed", |b| {
-        b.iter(|| vec4!(1i8, Vec2::<i16>::new(2, 3), 4f32))
+        b.iter(|| vec4!(1i8, vek::Vec2::<i16>::new(2, 3), 4f32))
     });
 }
 
 fn direct_vec4_conversion_mixed(c: &mut Criterion) {
     c.bench_function("direct_vec4_conversion_mixed", |b| {
         b.iter(|| {
-            let v2 = Vec2::new(2i16 as f32, 3i32 as f32);
-            Vec4::new(1i8 as f32, v2.x, v2.y, 4f32)
+            let v2 = vek::Vec2::new(2i16 as f32, 3i32 as f32);
+            vek::Vec4::new(1i8 as f32, v2.x, v2.y, 4f32)
         })
     });
 }
@@ -75,7 +75,12 @@ fn qvek_vec2_black_box(c: &mut Criterion) {
 
 fn direct_vec2_black_box(c: &mut Criterion) {
     c.bench_function("direct_vec2_black_box", |b| {
-        b.iter(|| black_box(Vec2::new(black_box(1i16 as f32), black_box(2i16 as f32))))
+        b.iter(|| {
+            black_box(vek::Vec2::new(
+                black_box(1i16 as f32),
+                black_box(2i16 as f32),
+            ))
+        })
     });
 }
 

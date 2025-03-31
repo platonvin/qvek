@@ -8,7 +8,7 @@
 //! ```rust
 //! # use qvek::*;
 //! # use vek::*;
-//! let a = Vec3::new(1.0f32, 2.0f32, 3.0f32);
+//! let a = vek::Vec3::new(1.0f32, 2.0f32, 3.0f32);
 //! ```
 //!
 //! you can combine different proxy types (scalars or even smaller vectors) using the macros:
@@ -18,15 +18,15 @@
 //! # use vek::*;
 //! // Create a Vec2<f32> from i16 and u8 and combine it with i8 to create Vec3<f64>:
 //! let a = dvec3!(vec2!(1i16, 2 as u8), 3i8);
-//! assert_eq!(a, Vec3::<f64>::new(1.0, 2.0, 3.0));
+//! assert_eq!(a, vek::Vec3::<f64>::new(1.0, 2.0, 3.0));
 //!
 //! // Create a Vec2<i32> from two integers:
 //! let b = ivec2!(1, 2);
-//! assert_eq!(b, Vec2::<i32>::new(1, 2));
+//! assert_eq!(b, vek::Vec2::<i32>::new(1, 2));
 //!
-//! // Create a Vec4<f64>:
+//! // Create a vek::Vec4<f64>:
 //! let c = dvec4!(vec3!(1, 2.0, 3 as i8), 4 as f64);
-//! assert_eq!(c, Vec4::<f64>::new(1.0, 2.0, 3.0, 4.0));
+//! assert_eq!(c, vek::Vec4::<f64>::new(1.0, 2.0, 3.0, 4.0));
 //! ```
 
 //TODO: figure out bool and NonZero types
@@ -182,9 +182,9 @@ where
     }
 }
 
-/// Implementation for Vec4<E>.
+/// Implementation for vek::Vec4<E>.
 ///
-/// A Vec4 converts to a proxy array with four elements.
+/// A vek::Vec4 converts to a proxy array with four elements.
 impl<E, T> IntoProxy<T> for vek::Vec4<E>
 where
     E: Copy,
@@ -307,9 +307,9 @@ where
     vek::Vec3::<E>::new(components[0], components[1], components[2])
 }
 
-/// --- Functions for Vec4<E> ---
+/// --- Functions for vek::Vec4<E> ---
 
-/// Builds a Vec4<E> from a single argument whose proxy size must be exactly 4.
+/// Builds a vek::Vec4<E> from a single argument whose proxy size must be exactly 4.
 pub fn vec4_1<E, T: IntoProxy<E>>(arg1: T) -> vek::Vec4<E>
 where
     E: Clone + Copy,
@@ -325,7 +325,7 @@ where
     vek::Vec4::<E>::new(comp[0], comp[1], comp[2], comp[3])
 }
 
-/// Builds a Vec4<E> from two arguments whose combined proxy sizes equal 4.
+/// Builds a vek::Vec4<E> from two arguments whose combined proxy sizes equal 4.
 pub fn vec4_2<E, T1: IntoProxy<E>, T2: IntoProxy<E>>(arg1: T1, arg2: T2) -> vek::Vec4<E>
 where
     E: Clone + Copy + Default,
@@ -343,7 +343,7 @@ where
     vek::Vec4::<E>::new(components[0], components[1], components[2], components[3])
 }
 
-/// Builds a Vec4<E> from three arguments whose combined proxy sizes equal 4.
+/// Builds a vek::Vec4<E> from three arguments whose combined proxy sizes equal 4.
 pub fn vec4_3<E, T1: IntoProxy<E>, T2: IntoProxy<E>, T3: IntoProxy<E>>(
     arg1: T1,
     arg2: T2,
@@ -375,7 +375,7 @@ where
     vek::Vec4::<E>::new(components[0], components[1], components[2], components[3])
 }
 
-/// Builds a Vec4<E> from four arguments whose combined proxy sizes equal 4.
+/// Builds a vek::Vec4<E> from four arguments whose combined proxy sizes equal 4.
 pub fn vec4_4<E, T1: IntoProxy<E>, T2: IntoProxy<E>, T3: IntoProxy<E>, T4: IntoProxy<E>>(
     arg1: T1,
     arg2: T2,
@@ -506,15 +506,18 @@ mod tests {
 
     #[test]
     fn test_vec2_combinations() {
-        assert_eq!(vec2!(1.0f32, 2.0f32), Vec2::<f32>::new(1.0, 2.0));
-        assert_eq!(vec2!(1i8, 2i8), Vec2::<f32>::new(1.0, 2.0));
-        assert_eq!(vec2!(Vec2::new(1i16, 2i16)), Vec2::<f32>::new(1.0, 2.0));
-        assert_eq!(vec2!(1.0f32, 2i8), Vec2::<f32>::new(1.0, 2.0));
-        assert_eq!(vec2!(1, 2), Vec2::<f32>::new(1.0, 2.0));
-        assert_eq!(i8vec2!(1i8, 2i8), Vec2::<i8>::new(1, 2));
-        assert_eq!(u32vec2!(1u32, 2u32), Vec2::<u32>::new(1, 2));
+        assert_eq!(vec2!(1.0f32, 2.0f32), vek::Vec2::<f32>::new(1.0, 2.0));
+        assert_eq!(vec2!(1i8, 2i8), vek::Vec2::<f32>::new(1.0, 2.0));
+        assert_eq!(
+            vec2!(vek::Vec2::new(1i16, 2i16)),
+            vek::Vec2::<f32>::new(1.0, 2.0)
+        );
+        assert_eq!(vec2!(1.0f32, 2i8), vek::Vec2::<f32>::new(1.0, 2.0));
+        assert_eq!(vec2!(1, 2), vek::Vec2::<f32>::new(1.0, 2.0));
+        assert_eq!(i8vec2!(1i8, 2i8), vek::Vec2::<i8>::new(1, 2));
+        assert_eq!(u32vec2!(1u32, 2u32), vek::Vec2::<u32>::new(1, 2));
         // #[cfg(feature = "unsafe_conversions")]
-        // assert_eq!(bvec2!(true, false), Vec2::<bool>::new(true, false));
+        // assert_eq!(bvec2!(true, false), vek::Vec2::<bool>::new(true, false));
     }
 
     #[test]
@@ -527,25 +530,28 @@ mod tests {
     fn test_vec3_combinations() {
         assert_eq!(
             vec3!(1.0f32, 2.0f32, 3.0f32),
-            Vec3::<f32>::new(1.0, 2.0, 3.0),
+            vek::Vec3::<f32>::new(1.0, 2.0, 3.0),
         );
-        assert_eq!(vec3!(1i8, 2i8, 3i8), Vec3::<f32>::new(1.0, 2.0, 3.0));
+        assert_eq!(vec3!(1i8, 2i8, 3i8), vek::Vec3::<f32>::new(1.0, 2.0, 3.0));
         assert_eq!(
-            vec3!(Vec2::new(1i16, 2i16), 3i8),
-            Vec3::<f32>::new(1.0, 2.0, 3.0),
+            vec3!(vek::Vec2::new(1i16, 2i16), 3i8),
+            vek::Vec3::<f32>::new(1.0, 2.0, 3.0),
         );
         assert_eq!(
-            vec3!(1.0f32, Vec2::new(2i8, 3i8)),
-            Vec3::<f32>::new(1.0, 2.0, 3.0),
+            vec3!(1.0f32, vek::Vec2::new(2i8, 3i8)),
+            vek::Vec3::<f32>::new(1.0, 2.0, 3.0),
         );
-        assert_eq!(vec3!(1i8, 2.0f32, 3i16), Vec3::<f32>::new(1.0, 2.0, 3.0));
         assert_eq!(
-            vec3!(Vec3::new(1i8, 2i8, 3i8)),
-            Vec3::<f32>::new(1.0, 2.0, 3.0),
+            vec3!(1i8, 2.0f32, 3i16),
+            vek::Vec3::<f32>::new(1.0, 2.0, 3.0)
         );
-        assert_eq!(i32vec3!(1, 2, 3), Vec3::<i32>::new(1, 2, 3));
-        assert_eq!(u64vec3!(1, 2, 3), Vec3::<u64>::new(1, 2, 3));
-        assert_eq!(dvec3!(1.0, 2.0, 3.0), Vec3::<f64>::new(1.0, 2.0, 3.0));
+        assert_eq!(
+            vec3!(vek::Vec3::new(1i8, 2i8, 3i8)),
+            vek::Vec3::<f32>::new(1.0, 2.0, 3.0),
+        );
+        assert_eq!(i32vec3!(1, 2, 3), vek::Vec3::<i32>::new(1, 2, 3));
+        assert_eq!(u64vec3!(1, 2, 3), vek::Vec3::<u64>::new(1, 2, 3));
+        assert_eq!(dvec3!(1.0, 2.0, 3.0), vek::Vec3::<f64>::new(1.0, 2.0, 3.0));
     }
 
     #[test]
@@ -558,35 +564,35 @@ mod tests {
     fn test_vec4_combinations() {
         assert_eq!(
             vec4!(1.0f32, 2.0f32, 3.0f32, 4.0f32),
-            Vec4::<f32>::new(1.0, 2.0, 3.0, 4.0),
+            vek::Vec4::<f32>::new(1.0, 2.0, 3.0, 4.0),
         );
         assert_eq!(
             vec4!(1i8, 2i8, 3i8, 4i8),
-            Vec4::<f32>::new(1.0, 2.0, 3.0, 4.0),
+            vek::Vec4::<f32>::new(1.0, 2.0, 3.0, 4.0),
         );
         assert_eq!(
-            vec4!(Vec3::new(1i16, 2i16, 3i16), 4i8),
-            Vec4::<f32>::new(1.0, 2.0, 3.0, 4.0),
+            vec4!(vek::Vec3::new(1i16, 2i16, 3i16), 4i8),
+            vek::Vec4::<f32>::new(1.0, 2.0, 3.0, 4.0),
         );
         assert_eq!(
-            vec4!(1.0f32, Vec3::new(2i8, 3i8, 4i8)),
-            Vec4::<f32>::new(1.0, 2.0, 3.0, 4.0),
+            vec4!(1.0f32, vek::Vec3::new(2i8, 3i8, 4i8)),
+            vek::Vec4::<f32>::new(1.0, 2.0, 3.0, 4.0),
         );
         assert_eq!(
-            vec4!(Vec2::new(1i8, 2i8), Vec2::new(3i8, 4i8)),
-            Vec4::<f32>::new(1.0, 2.0, 3.0, 4.0),
+            vec4!(vek::Vec2::new(1i8, 2i8), vek::Vec2::new(3i8, 4i8)),
+            vek::Vec4::<f32>::new(1.0, 2.0, 3.0, 4.0),
         );
         #[cfg(feature = "unsafe_conversions")] // cause f64 into f32
         assert_eq!(
             vec4!(1i8, 2.0f32, 3i16, 4.0f64),
-            Vec4::<f32>::new(1.0, 2.0, 3.0, 4.0),
+            vek::Vec4::<f32>::new(1.0, 2.0, 3.0, 4.0),
         );
         assert_eq!(
-            vec4!(Vec4::new(1i8, 2i8, 3i8, 4i8)),
-            Vec4::<f32>::new(1.0, 2.0, 3.0, 4.0),
+            vec4!(vek::Vec4::new(1i8, 2i8, 3i8, 4i8)),
+            vek::Vec4::<f32>::new(1.0, 2.0, 3.0, 4.0),
         );
-        assert_eq!(ivec4!(1, 2, 3, 4), Vec4::<i32>::new(1, 2, 3, 4));
-        assert_eq!(u8vec4!(1, 2, 3, 4), Vec4::<u8>::new(1, 2, 3, 4));
+        assert_eq!(ivec4!(1, 2, 3, 4), vek::Vec4::<i32>::new(1, 2, 3, 4));
+        assert_eq!(u8vec4!(1, 2, 3, 4), vek::Vec4::<u8>::new(1, 2, 3, 4));
     }
 
     #[test]
@@ -598,8 +604,11 @@ mod tests {
     #[cfg(feature = "unsafe_conversions")]
     #[test]
     fn test_unsafe_conversions() {
-        assert_eq!(i8vec2!(1.99f32, 127.999f32), Vec2::<i8>::new(1, 127));
-        assert_eq!(u8vec3!(1.0f32, 2.0f32, 3.0f32), Vec3::<u8>::new(1, 2, 3));
+        assert_eq!(i8vec2!(1.99f32, 127.999f32), vek::Vec2::<i8>::new(1, 127));
+        assert_eq!(
+            u8vec3!(1.0f32, 2.0f32, 3.0f32),
+            vek::Vec3::<u8>::new(1, 2, 3)
+        );
     }
 
     #[test]
@@ -616,7 +625,7 @@ mod tests {
     // fn test_non_Default() {
     //     assert_eq!(
     //         vec2!(NonZeroI8::new(1).unwrap(), NonZeroI8::new(2).unwrap()),
-    //         Vec2::<f32>::new(1.0, 2.0),
+    //         vek::Vec2::<f32>::new(1.0, 2.0),
     //     );
     //     assert_eq!(
     //         vec3!(
@@ -624,7 +633,7 @@ mod tests {
     //             NonZeroU32::new(2).unwrap(),
     //             NonZeroU32::new(3).unwrap()
     //         ),
-    //         Vec3::<f32>::new(1.0, 2.0, 3.0),
+    //         vek::Vec3::<f32>::new(1.0, 2.0, 3.0),
     //     );
     //     assert_eq!(
     //         vec4!(
@@ -633,7 +642,7 @@ mod tests {
     //             NonZeroU64::new(3).unwrap(),
     //             NonZeroU64::new(4).unwrap()
     //         ),
-    //         Vec4::<f32>::new(1.0, 2.0, 3.0, 4.0),
+    //         vek::Vec4::<f32>::new(1.0, 2.0, 3.0, 4.0),
     //     );
     // }
 }
