@@ -1,0 +1,17 @@
+[package]
+    name = "qvek"
+    version = "0.1.0"
+    edition = "2024"
+
+[features]
+    unsafe_conversions = []
+
+[dependencies]
+    vek = "0.17.1"
+
+[dev-dependencies]
+    criterion = "0.5.1"
+
+[[bench]]
+    name = "bench"
+    harness = false
