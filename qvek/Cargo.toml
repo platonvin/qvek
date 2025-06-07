@@ -1,0 +1,23 @@
+[package]
+name = "qvek"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+unsafe_conversions = []
+serde = ["vek/serde"]
+bytemuck = ["vek/bytemuck"]
+
+[lib]
+path = "lib.rs"
+
+[dependencies]
+vek = { version = "0.17.1", default-features = false, features = [] }
+gen_conversions_macro = { path = "../gen_conversions_macro" }
+
+[dev-dependencies]
+criterion = "0.6.0"
+
+[[bench]]
+name = "bench"
+harness = false
