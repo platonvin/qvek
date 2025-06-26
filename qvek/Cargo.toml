@@ -35,7 +35,7 @@ vec8 = ["vek/vec8"]
 path = "lib.rs"
 
 [dependencies]
-vek = { version = "*" }
+vek = { version = "0.17" }
 
 [dev-dependencies]
 criterion = "0.6.0"
