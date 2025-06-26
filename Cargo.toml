@@ -1,2 +1,10 @@
 [workspace]
-members = ["qvek", "gen_conversions_macro"]
+members = ["qvek"]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+license = "MIT"
+repository = "https://github.com/platonvin/qvek"
+edition = "2024"
+readme = "README.md"

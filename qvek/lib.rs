@@ -21,7 +21,7 @@
 //! let c = dvec4!(vec3!(1, 2.0, 3 as i8), 4 as f64);
 //! assert_eq!(c, vek::Vec4::<f64>::new(1.0, 2.0, 3.0, 4.0));
 //! ```
-//! Note: at the moment, all casts between types are also GLSL-style - "unsafe" (casted with as)
+//! Note: at the moment, all casts between types are also GLSL-style - "unsafe" (casted with `as``)
 #![feature(const_trait_impl)]
 
 //TODO: figure out bool and NonZero types
@@ -38,13 +38,40 @@ impl_scalar!(
 /// Conversion trait that converts one scalar type into another.
 ///
 /// Currently, it is implement by a macro with `as` cast for all primite type combinations.
+/// We dont want to use From/Into because they are not const
 #[const_trait]
 trait ConvertFrom<Source> {
     fn convert_from(src: Source) -> Self;
 }
 
-// generates a bunch of ConvertFrom impls for primitive types
-gen_conversions_macro::generate_conversions!();
+/// Macro that loops over lists of numeric types,
+/// and generates `impl const ConvertFrom<Src> for Dst { … }` for every possible pair
+// TODO: should i just generate this in build script?
+macro_rules! generate_conversions {
+    () => {
+        generate_conversions!(@impl
+            [u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, f32, f64],
+            [u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, f32, f64]
+        );
+    };
+
+    (@impl [], [$($dst_ty:ty),*]) => {};
+
+    (@impl [$src_ty:ty $(, $rest_src:ty)*], [$($dst_ty:ty),*]) => {
+        $(
+            impl const ConvertFrom<$src_ty> for $dst_ty {
+                #[inline(always)]
+                fn convert_from(src: $src_ty) -> $dst_ty {
+                    src as $dst_ty
+                }
+            }
+        )*
+
+        generate_conversions!(@impl [$($rest_src),*], [$($dst_ty),*]);
+    };
+}
+
+generate_conversions!(@impl [u8,u16,u32,u64,u128,usize,i8,i16,i32,i64,i128,isize,f32,f64],[u8,u16,u32,u64,u128,usize,i8,i16,i32,i64,i128,isize,f32,f64]);
 
 /// Trait that converts a type into a proxy.
 ///
@@ -430,15 +457,15 @@ where
 
 /// Macro, that generates vector creation macros for a given scalar type.
 ///
-/// This macro generates three macros for creating 2-, 3-, and 4-component vectors.
-/// Each macro uses your generic helper functions with the provided scalar type.
+/// Generates three macros for creating 2-, 3-, and 4-component vectors.
+/// Each macro uses generic helper functions with the target scalar type.
 ///
 /// # Example
 ///
 /// ```rust
 /// # use qvek::generate_vec_macros;
 /// // This will generate macros i16vec2!, i16vec3!, and i16vec4!
-/// // Note that qvek already generates them for common types, so this is given as an example
+/// // Note that qvek already generates them for common types, this is given as an example
 /// generate_vec_macros!(i16, i16vec2, i16vec3, i16vec4);
 ///
 /// let a: qvek::vek::Vec3<i16> = i16vec3!(1i16, 2i16, 3i16);
@@ -485,7 +512,7 @@ macro_rules! generate_vec_macros {
     };
 }
 
-// Generate typed macros for common scalar types:
+// Generate GLSL-like macros for common scalar types:
 generate_vec_macros!(f32, vec2, vec3, vec4);
 generate_vec_macros!(f64, dvec2, dvec3, dvec4);
 generate_vec_macros!(i8, i8vec2, i8vec3, i8vec4);

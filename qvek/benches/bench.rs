@@ -1,121 +1,144 @@
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
+use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};
 use qvek::*;
+use std::hint::black_box;
+use vek::*;
 
-fn direct_conversion_i32_f32(c: &mut Criterion) {
-    c.bench_function("direct_conversion_i32_f32", |b| {
-        b.iter(|| vek::Vec3::new(1i32 as f32, 2i32 as f32, 3i32 as f32))
-    });
+fn direct_i32_to_f32(v: Vec3<i32>) -> Vec3<f32> {
+    Vec3::new(v.x as f32, v.y as f32, v.z as f32)
 }
 
-fn qvek_conversion_i32_f32(c: &mut Criterion) {
-    c.bench_function("qvek_conversion_i32_f32", |b| {
-        b.iter(|| vec3!(1i32, 2i32, 3i32))
-    });
+fn qvek_i32_to_f32(v: Vec3<i32>) -> Vec3<f32> {
+    vec3!(v)
 }
 
-fn direct_conversion_i8_f32(c: &mut Criterion) {
-    c.bench_function("direct_conversion_i8_f32", |b| {
-        b.iter(|| vek::Vec3::new(1i8 as f32, 2i8 as f32, 3i8 as f32))
-    });
+fn direct_i8_to_f32(v: Vec3<i8>) -> Vec3<f32> {
+    Vec3::new(v.x as f32, v.y as f32, v.z as f32)
 }
 
-fn qvek_conversion_i8_f32(c: &mut Criterion) {
-    c.bench_function("qvek_conversion_i8_f32", |b| {
-        b.iter(|| vec3!(1i8, 2i8, 3i8))
-    });
+fn qvek_i8_to_f32(v: Vec3<i8>) -> Vec3<f32> {
+    vec3!(v)
 }
 
-fn direct_conversion_vec2_f32(c: &mut Criterion) {
-    c.bench_function("direct_conversion_vec2_f32", |b| {
+fn direct_vec2_to_vec3(v2: Vec2<i16>, scalar: i16) -> Vec3<f32> {
+    Vec3::new(v2.x as f32, v2.y as f32, scalar as f32)
+}
+
+fn qvek_vec2_to_vec3(v2: Vec2<i16>, scalar: i16) -> Vec3<f32> {
+    vec3!(v2, scalar)
+}
+
+fn direct_f64_to_f32(v: Vec3<f64>) -> Vec3<f32> {
+    Vec3::new(v.x as f32, v.y as f32, v.z as f32)
+}
+
+fn qvek_f64_to_f32(v: Vec3<f64>) -> Vec3<f32> {
+    vec3!(v.xy(), v.z)
+}
+
+fn direct_mixed_vec4(a: i8, b2: Vec2<i16>, c: f32) -> Vec4<f32> {
+    Vec4::new(a as f32, b2.x as f32, b2.y as f32, c)
+}
+
+fn qvek_mixed_vec4(a: i8, b2: Vec2<i16>, c: f32) -> Vec4<f32> {
+    vec4!(a, b2, c)
+}
+
+pub fn bench_i32_to_f32(c: &mut Criterion) {
+    let mut group = c.benchmark_group("i32 -> f32");
+    let v_in = black_box(Vec3::new(1i32, 2, 3));
+
+    group.bench_function("direct", |b| {
+        b.iter(|| black_box(direct_i32_to_f32(black_box(v_in))))
+    });
+
+    group.bench_function("qvek", |b| {
+        b.iter(|| black_box(qvek_i32_to_f32(black_box(v_in))))
+    });
+
+    group.finish();
+}
+
+pub fn bench_i8_to_f32(c: &mut Criterion) {
+    let mut group = c.benchmark_group("i8 -> f32");
+    let v_in = black_box(Vec3::new(1i8, 2, 3));
+
+    group.bench_function("direct", |b| {
+        b.iter(|| black_box(direct_i8_to_f32(black_box(v_in))))
+    });
+
+    group.bench_function("qvek", |b| {
+        b.iter(|| black_box(qvek_i8_to_f32(black_box(v_in))))
+    });
+
+    group.finish();
+}
+
+pub fn bench_vec2_to_vec3(c: &mut Criterion) {
+    let mut group = c.benchmark_group("Vec2<i16> + i16 -> Vec3<f32>");
+    let base_v2 = black_box(Vec2::new(1i16, 2));
+    let scalar = black_box(3i16);
+
+    group.bench_function("direct", |b| {
+        b.iter(|| black_box(direct_vec2_to_vec3(black_box(base_v2), black_box(scalar))))
+    });
+
+    group.bench_function("qvek", |b| {
+        b.iter(|| black_box(qvek_vec2_to_vec3(black_box(base_v2), black_box(scalar))))
+    });
+
+    group.finish();
+}
+
+pub fn bench_f64_to_f32(c: &mut Criterion) {
+    let mut group = c.benchmark_group("f64 -> f32");
+    let v_in = black_box(Vec3::new(1.0f64, 2.0, 3.0));
+
+    group.bench_function("direct", |b| {
+        b.iter(|| black_box(direct_f64_to_f32(black_box(v_in))))
+    });
+
+    group.bench_function("qvek", |b| {
+        b.iter(|| black_box(qvek_f64_to_f32(black_box(v_in))))
+    });
+
+    group.finish();
+}
+
+pub fn bench_mixed_vec4(c: &mut Criterion) {
+    let mut group = c.benchmark_group("mixed Vec4");
+    let a = black_box(1i8);
+    let b2 = black_box(Vec2::new(2i16, 3));
+    let c_scalar = black_box(4f32);
+
+    group.bench_function("direct", |b| {
         b.iter(|| {
-            let v = vek::Vec2::new(1i16 as f32, 2i16 as f32);
-            vek::Vec3::new(v.x, v.y, 3i16 as f32)
-        })
-    });
-}
-
-fn qvek_conversion_vec2_f32(c: &mut Criterion) {
-    c.bench_function("qvek_conversion_vec2_f32", |b| {
-        b.iter(|| vec3!(vek::Vec2::new(1i16, 2i16), 3i16))
-    });
-}
-
-fn direct_conversion_f64_f32(c: &mut Criterion) {
-    c.bench_function("direct_conversion_f64_f32", |b| {
-        b.iter(|| vek::Vec3::new(1.0f64 as f32, 2.0f64 as f32, 3.0f64 as f32))
-    });
-}
-
-fn qvek_conversion_f64_f32(c: &mut Criterion) {
-    c.bench_function("qvek_conversion_f64_f32", |b| {
-        b.iter(|| vec3!(1.0f64, 2.0f64, 3.0f64))
-    });
-}
-
-fn qvek_vec4_conversion_mixed(c: &mut Criterion) {
-    c.bench_function("qvek_vec4_conversion_mixed", |b| {
-        b.iter(|| vec4!(1i8, vek::Vec2::<i16>::new(2, 3), 4f32))
-    });
-}
-
-fn direct_vec4_conversion_mixed(c: &mut Criterion) {
-    c.bench_function("direct_vec4_conversion_mixed", |b| {
-        b.iter(|| {
-            let v2 = vek::Vec2::new(2i16 as f32, 3i32 as f32);
-            vek::Vec4::new(1i8 as f32, v2.x, v2.y, 4f32)
-        })
-    });
-}
-
-fn qvek_vec2_black_box(c: &mut Criterion) {
-    c.bench_function("qvek_vec2_black_box", |b| {
-        b.iter(|| black_box(vec2!(black_box(1i16), black_box(2i16))))
-    });
-}
-
-fn direct_vec2_black_box(c: &mut Criterion) {
-    c.bench_function("direct_vec2_black_box", |b| {
-        b.iter(|| {
-            black_box(vek::Vec2::new(
-                black_box(1i16 as f32),
-                black_box(2i16 as f32),
+            black_box(direct_mixed_vec4(
+                black_box(a),
+                black_box(b2),
+                black_box(c_scalar),
             ))
         })
     });
+
+    group.bench_function("qvek", |b| {
+        b.iter(|| {
+            black_box(qvek_mixed_vec4(
+                black_box(a),
+                black_box(b2),
+                black_box(c_scalar),
+            ))
+        })
+    });
+
+    group.finish();
 }
 
 criterion_group!(
-    benches_i32,
-    direct_conversion_i32_f32,
-    qvek_conversion_i32_f32
+    benches,
+    bench_i32_to_f32,
+    bench_i8_to_f32,
+    bench_vec2_to_vec3,
+    bench_f64_to_f32,
+    bench_mixed_vec4
 );
-
-criterion_group!(benches_i8, direct_conversion_i8_f32, qvek_conversion_i8_f32);
-
-criterion_group!(
-    benches_vec2,
-    direct_conversion_vec2_f32,
-    qvek_conversion_vec2_f32,
-    qvek_vec2_black_box,
-    direct_vec2_black_box
-);
-
-criterion_group!(
-    benches_f64,
-    direct_conversion_f64_f32,
-    qvek_conversion_f64_f32
-);
-
-criterion_group!(
-    benches_vec4,
-    qvek_vec4_conversion_mixed,
-    direct_vec4_conversion_mixed
-);
-
-criterion_main!(
-    benches_i32,
-    benches_i8,
-    benches_vec2,
-    benches_f64,
-    benches_vec4
-);
+criterion_main!(benches);

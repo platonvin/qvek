@@ -1,19 +1,41 @@
 [package]
 name = "qvek"
-version = "0.1.0"
-edition = "2024"
+version = { workspace = true }
+repository = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+readme = { workspace = true }
+keywords = ["vek", "qol", "vector"]
+description = "convenient GLSL-style casts for vek"
 
 [features]
+# actual qvek feature
 unsafe_conversions = []
-serde = ["vek/serde"]
+# re-exporting all vek features
+default = ["rgb", "rgba", "std"]
+rgb = ["vek/rgb"]
+rgba = ["vek/rgba"]
+std = ["vek/std"]
+az = ["vek/az"]
 bytemuck = ["vek/bytemuck"]
+image = ["vek/image"]
+libm = ["vek/libm"]
+mint = ["vek/mint"]
+platform_intrinsics = ["vek/platform_intrinsics"]
+repr_simd = ["vek/repr_simd"]
+serde = ["vek/serde"]
+uv = ["vek/uv"]
+uvw = ["vek/uvw"]
+vec16 = ["vek/vec16"]
+vec32 = ["vek/vec32"]
+vec64 = ["vek/vec64"]
+vec8 = ["vek/vec8"]
 
 [lib]
 path = "lib.rs"
 
 [dependencies]
-vek = { version = "0.17.1", default-features = false, features = [] }
-gen_conversions_macro = { path = "../gen_conversions_macro" }
+vek = { version = "*" }
 
 [dev-dependencies]
 criterion = "0.6.0"

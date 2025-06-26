@@ -1,10 +1,11 @@
 [![Rust](https://github.com/platonvin/qvek/actions/workflows/rust.yml/badge.svg)](https://github.com/platonvin/qvek/actions/workflows/rust.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # qvek
 
 Convenient vector creation macros for the `vek` crate.
 
-`qvek` simplifies the construction of `vek` vectors by allowing you to combine scalars and smaller vectors directly in macros, with automatic type conversions. It is syntax sugar library and should result into no-op in most cases
+`qvek` simplifies the construction of `vek` vectors by allowing you to combine scalars and smaller vectors directly in macros, with automatic type conversions. It is syntax sugar library with zero runtime overhead
 
 To enable potentially unsafe conversions (e.g. f32 into i8), enable feature `unsafe_conversions`
 
@@ -27,3 +28,7 @@ assert_eq!(c, Vec4::<f64>::new(1.0, 2.0, 3.0, 4.0));
 ```
 
 <!-- i am addicted to meta libraries -->
+
+## License
+
+This project is licensed under the MIT license. See [LICENSE](LICENSE) for details.
